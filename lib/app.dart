@@ -28,8 +28,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       // 根據登入狀態顯示不同畫面
-      //home: const ChatPage(),
-      home: const HistoryPage(),
+      home: const ChatPage(),
     );
   }
 }

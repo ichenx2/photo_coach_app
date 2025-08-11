@@ -56,7 +56,8 @@ class _DetailRecordPageState extends State<DetailRecordPage> {
             final records = data.map((item) {
               final title = item['skill_name']?.toString() ?? '無標題';
               final progress = (item['progress'] ?? 0) as num;
-              return RecordData(title, _iconFor(title), progress.toDouble());
+              final level = (item['level'] ?? 1) as int;
+              return RecordData(title, _iconFor(title), progress.toDouble(), level);
             }).toList();
 
             return SingleChildScrollView(
@@ -211,7 +212,8 @@ class RecordData {
   final String title;
   final IconData icon;
   final double progress;
-  const RecordData(this.title, this.icon, this.progress);
+  final int level;
+  const RecordData(this.title, this.icon, this.progress,this.level);
 }
 
 class RecordCard extends StatelessWidget {
@@ -275,7 +277,7 @@ class RecordCard extends StatelessWidget {
       },
       child: Container(
         width: width,
-        height: 200,
+        height: 220,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.grey.shade200,
@@ -294,7 +296,16 @@ class RecordCard extends StatelessWidget {
                 color: Colors.grey.shade600,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
+            Text(
+              '等級：${data.level}',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 10),
             LinearProgressIndicator(
               value: data.progress,
               minHeight: 10,
