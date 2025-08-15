@@ -16,6 +16,7 @@ class AuthSelectionScreen extends StatelessWidget {
             'assets/images/auth_background.png',
             fit: BoxFit.cover,
           ),
+
           Column(
             children: [
               const SizedBox(height: 100),
