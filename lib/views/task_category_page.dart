@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../controllers/task_controller.dart';
 import 'widgets/task_card.dart';
+import 'task_list_page.dart';
 
 class TaskCategoryPage extends StatefulWidget {
   const TaskCategoryPage({super.key});
@@ -20,7 +21,6 @@ class _TaskCategoryPageState extends State<TaskCategoryPage> {
   Widget build(BuildContext context) {
     final taskController = Provider.of<TaskController>(context);
     final allTasks = taskController.allTasks;
-
     final filteredTasks = selectedTags.isEmpty
         ? allTasks
         : allTasks.where((task) {
@@ -29,7 +29,44 @@ class _TaskCategoryPageState extends State<TaskCategoryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('主題分類', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: PopupMenuButton<String>(
+          onSelected: (value) {
+            if (value == '主題分類') {
+              // Do nothing, already on this page
+            } else if (value == '任務清單') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const TaskListPage(),
+                ),
+              );
+            }
+          },
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              Text(
+                '主題分類',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(width: 4),
+              Icon(
+                Icons.arrow_drop_down,
+                size: 20,
+              ),
+            ],
+          ),
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: '主題分類',
+              child: Text('主題分類'),
+            ),
+            const PopupMenuItem(
+              value: '任務清單',
+              child: Text('任務清單'),
+            ),
+          ],
+        ),
         centerTitle: true,
       ),
       body: Column(
