@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import 'package:photo_coach/controllers/analyze_controller.dart';
 import 'package:photo_coach/controllers/feedback_controller.dart';
 import 'package:provider/provider.dart';
@@ -26,17 +24,26 @@ class _AnalysisResultPageState extends State<AnalysisResultPage> {
         child: controller.isLoading
             ? const Center(child: CircularProgressIndicator())
             : SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildImageSection(controller),
-              const SizedBox(height: 16),
-              const Text(
-                '分析結果',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildImageSection(controller),
+                    const SizedBox(height: 16),
+                    const Text(
+                      '分析結果',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    _buildRatingRow(controller),
+                    const SizedBox(height: 12),
+                    _buildBulletPoints(controller),
+                    const SizedBox(height: 16),
+                    _buildTagButtons(),
+                  ],
                 ),
               ),
               const SizedBox(height: 8),
@@ -181,6 +188,7 @@ class _AnalysisResultPageState extends State<AnalysisResultPage> {
     )
         : const SizedBox(); // 若沒有內容就不顯示
   }
+
 
   Widget _buildAnalyzeButton(AnalyzeController analyzeController) {
     return ElevatedButton(
