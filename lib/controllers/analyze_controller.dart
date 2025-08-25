@@ -1,12 +1,15 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:logger/logger.dart';
-import 'package:photo_coach/services/analytics_service.dart';
+import 'package:photo_coach/services/analyze_service.dart';
 import 'package:photo_coach/utils/tag_icon_mapping.dart';
+import 'package:logger/logger.dart';
 
 final _logger = Logger();
 
 class AnalyzeController extends ChangeNotifier {
+  AnalyzeController({required this.analyzeService});
+  final AnalyzeService analyzeService;
+
   bool isLoading = false;
   File? analyzedImage;
 
@@ -44,15 +47,19 @@ class AnalyzeController extends ChangeNotifier {
   //tech end
 
   //
-  Future<void> analyze(File file) async {
+  Future<void> analyze(File file, int subTaskId) async {
     isLoading = true;
     notifyListeners();
 
     try {
       analyzedImage = file;
+      final imageBytes = await file.readAsBytes();
 
-      // 背景執行：把位元組丟進分析服務（請保持你原本的 AnalyzeService）
-      final result = await compute(_analyzeInBackground, file.path);
+      final result = await analyzeService.analyzeImageBytes(
+        imageBytes,
+        subTaskId,
+      );
+
       _logger.i("分析結果：$result");
 
       // 格式
@@ -86,11 +93,4 @@ class AnalyzeController extends ChangeNotifier {
       notifyListeners();
     }
   }
-}
-
-Future<Map<String, dynamic>> _analyzeInBackground(String filePath) async {
-  final file = File(filePath);
-  final imageBytes = await file.readAsBytes();
-  final result = await AnalyzeService.analyzeImageBytes(imageBytes);
-  return result;
 }

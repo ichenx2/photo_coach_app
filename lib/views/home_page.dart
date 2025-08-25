@@ -8,22 +8,6 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  // Widget build(BuildContext context) {
-  //   final auth = Provider.of<AuthController>(context);
-
-  //   return Scaffold(
-  //     appBar: AppBar(title: const Text('Home Page')),
-  //     body: Center(
-  //       child: ElevatedButton(
-  //         onPressed: () {
-  //           auth.logout(); // 按下登出 → 回到登入頁
-  //         },
-  //         child: const Text('Log Out'),
-  //       ),
-  //     ),
-  //   );
-  // }
-
   State<HomePage> createState() => _HomePageState();
 }
 
@@ -50,7 +34,7 @@ Widget _photoCard(String title, String subtitle, bool liked, {required String im
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(12),
-      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
+      boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6)],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,7 +67,6 @@ Widget _photoCard(String title, String subtitle, bool liked, {required String im
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,15 +104,19 @@ class _HomePageState extends State<HomePage> {
               Center(
                 child: ElevatedButton.icon(
                   onPressed: () async {
+                    // ✅ 先抓 NavigatorState，避免跨 async gap 使用 context
+                    final navigator = Navigator.of(context);
+
                     final selectedPlaceLabel = await showDialog<String>(
                       context: context,
                       builder: (_) => const TaskChoiceDialog(),
                     );
 
-                    if (selectedPlaceLabel != null) {
-                      final prompt = '我想拍 $selectedPlaceLabel';
-                      sendInitialPrompt(prompt, context);
-                    }
+                    if (selectedPlaceLabel == null) return;
+                    if (!mounted) return; // widget 可能已被移除
+
+                    final prompt = '我想拍 $selectedPlaceLabel';
+                    sendInitialPrompt(prompt, navigator); // ✅ 用 navigator 來 push
                   },
                   icon: const Icon(Icons.camera_alt),
                   label: const Text("開始拍攝任務"),
@@ -174,10 +161,10 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: Row(
                   children: [
-                    Expanded(
+                    const Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text("台灣街景", style: TextStyle(fontWeight: FontWeight.bold)),
                           SizedBox(height: 4),
                           Text("拍攝一張具有台灣感性的街景照。"),
@@ -243,7 +230,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void sendInitialPrompt(String prompt, BuildContext context) {
-    Navigator.pushNamed(context, '/chat', arguments: prompt);
+  // ✅ 用 NavigatorState 做導頁
+  void sendInitialPrompt(String prompt, NavigatorState navigator) {
+    navigator.pushNamed('/chat', arguments: prompt);
   }
 }

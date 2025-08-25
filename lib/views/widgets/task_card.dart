@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../models/task_model.dart';
+import '../../models/task.dart';
 import 'capture_sheet.dart';
 import 'confirm_dialog.dart';
 
@@ -300,10 +300,10 @@ class _AnimatedSubTaskTileState extends State<AnimatedSubTaskTile>
                     height: 42,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CaptureSheet(),
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) => CaptureSheet(
+                            subTaskId: widget.subTask.id
                           ),
                         );
                       },
